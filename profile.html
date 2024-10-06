@@ -30,6 +30,9 @@
                 <ul class="student-details" id="student-details">
                     <!-- Thông tin sinh viên sẽ được tải từ JSON -->
                 </ul>
+                <div class="edit-btn">
+                    <a href="edit-student.html" class="button">Sửa thông tin</a>
+                </div>
             </div>
 
             <div class="grade-chart">
@@ -44,53 +47,57 @@
     </footer>
     <script>
         // Hàm tải file JSON và hiển thị dữ liệu
-        fetch('data/grades.json')  // Đường dẫn đến file JSON
-            .then(response => response.json())
-            .then(data => {
-                // Cập nhật thông tin sinh viên
-                const studentDetails = document.getElementById('student-details');
-                studentDetails.innerHTML = `
-                    <li><strong>Mã sinh viên:</strong> ${data.student_id}</li>
-                    <li><strong>Họ và tên:</strong> ${data.name}</li>
-                    <li><strong>Lớp:</strong> ${data.class}</li>
-                `;
+fetch('data/grades.json')  // Đường dẫn đến file JSON
+    .then(response => response.json())
+    .then(data => {
+        // Cập nhật thông tin sinh viên
+        const studentDetails = document.getElementById('student-details');
+        studentDetails.innerHTML = `
+            <li><strong>Mã sinh viên:</strong> ${data.student_id}</li>
+            <li><strong>Họ và tên:</strong> ${data.name}</li>
+            <li><strong>Ngày sinh:</strong> ${data.birthdate}</li>
+            <li><strong>Khóa học:</strong> ${data.course_year}</li>
+            <li><strong>Thành phố:</strong> ${data.hometown}</li>
+            <li><strong>Địa chỉ:</strong> ${data.address}</li>
+        `;
 
-                // Chuẩn bị dữ liệu cho biểu đồ
-                const labels = data.grades.map(grade => grade.subject); // Lấy tên môn học
-                const gradeData = data.grades.map(grade => grade.grade4); // Lấy điểm thang 4
+        // Chuẩn bị dữ liệu cho biểu đồ
+        const labels = data.grades.map(grade => grade.subject); // Lấy tên môn học
+        const gradeData = data.grades.map(grade => grade.grade4); // Lấy điểm thang 4
 
-                // Cấu hình và tạo biểu đồ
-                const chartData = {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Điểm thang 4',
-                        data: gradeData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                };
+        // Cấu hình và tạo biểu đồ
+        const chartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Điểm thang 4',
+                data: gradeData,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
 
-                const config = {
-                    type: 'bar',
-                    data: chartData,
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 4 // Giới hạn thang điểm 4.0
-                            }
-                        }
+        const config = {
+            type: 'bar',
+            data: chartData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 4 // Giới hạn thang điểm 4.0
                     }
-                };
+                }
+            }
+        };
 
-                // Tạo biểu đồ
-                const gradeChart = new Chart(
-                    document.getElementById('gradeChart'),
-                    config
-                );
-            })
-            .catch(error => console.error('Error loading JSON data:', error));
+        // Tạo biểu đồ
+        const gradeChart = new Chart(
+            document.getElementById('gradeChart'),
+            config
+        );
+    })
+    .catch(error => console.error('Error loading JSON data:', error));
+
     </script>
 </body>
 </html>

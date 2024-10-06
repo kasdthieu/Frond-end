@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa thông tin sinh viên</title>
+    <link rel="stylesheet" href="asset/css/styles.css">
+</head>
+<body>
+    <!-- Thanh điều hướng -->
+    <nav class="navbar">
+        <div class="logo">Quản lý sinh viên</div>
+        <ul class="nav-links">
+            <li><a href="profile.html">Thông tin sinh viên</a></li>
+            <li><a href="grades.html">Xem điểm</a></li>
+            <li><a href="register.html">Đăng ký môn học</a></li>
+            <li><a href="schedule.html">Lên lịch học</a></li>
+            <li><a href="schedule-view.html">Xem lịch học</a></li>
+            <li><a href="index.html" class="logout">Đăng xuất</a></li>
+        </ul>
+    </nav>
+
+    <!-- Nội dung trang sửa thông tin sinh viên -->
+    <div class="container">
+        <div class="edit-student-form">
+            <h2>Sửa Thông Tin Sinh Viên</h2>
+            <form id="edit-student-form">
+                <div class="form-grid">
+                    <div>
+                        <label for="student_id">Mã sinh viên:</label>
+                        <input type="text" id="student_id" required>
+                    </div>
+                    <div>
+                        <label for="name">Họ và tên:</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div>
+                        <label for="birthdate">Ngày sinh:</label>
+                        <input type="date" id="birthdate" required>
+                    </div>
+                    <div>
+                        <label for="course_year">Khóa học:</label>
+                        <input type="text" id="course_year" required>
+                    </div>
+                    <div>
+                        <label for="hometown">Thành phố:</label>
+                        <input type="text" id="hometown" required>
+                    </div>
+                    <div>
+                        <label for="address">Địa chỉ:</label>
+                        <input type="text" id="address" required>
+                    </div>
+                </div>
+                <div class="submit-btn">
+                    <button type="submit">Lưu thông tin</button>
+                    <button type="button" id="back-btn">Quay Lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+       function loadStudentData() {
+        fetch('data/grades.json')  // Đường dẫn đến file JSON hoặc API
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('student_id').value = data.student_id;
+                document.getElementById('name').value = data.name;
+                document.getElementById('birthdate').value = data.birthdate;
+                document.getElementById('course_year').value = data.course_year;
+                document.getElementById('hometown').value = data.hometown;
+                document.getElementById('address').value = data.address;
+            })
+            .catch(error => console.error('Lỗi khi tải dữ liệu sinh viên:', error));
+    }
+
+    // Gọi hàm khi trang được tải
+    window.onload = loadStudentData;
+
+    // Gửi dữ liệu sau khi nhấn "Lưu thông tin"
+    document.getElementById('edit-student-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const studentData = {
+            student_id: document.getElementById('student_id').value,
+            name: document.getElementById('name').value,
+            birthdate: document.getElementById('birthdate').value,
+            course_year: document.getElementById('course_year').value,
+            hometown: document.getElementById('hometown').value,
+            address: document.getElementById('address').value
+        };
+
+        fetch('api-endpoint-url', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(studentData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Lưu dữ liệu thành công:', data);
+            // Chuyển hướng về trang thông tin sinh viên
+            window.location.href = 'profile.html';
+        })
+        .catch(error => console.error('Lỗi khi lưu dữ liệu:', error));
+    });
+
+    // Nút "Quay Lại"
+    document.getElementById('back-btn').addEventListener('click', function() {
+        window.location.href = 'profile.html';
+    });
+    </script>
+    
+    <footer class="footer">
+        <p>Copyright @ 2024 Nguyễn Tiến Thiệu</p>
+    </footer>
+</body>
+</html>

@@ -1,13 +1,15 @@
 {
-    "student_id": "B21DCVT412",
-    "name": "Nguyễn Tiến Thiệu",
-    "class": "VT04",
-    "grades": [
-      {"subject": "Môn 1", "grade4": 3.5, "grade10": 8.5},
-      {"subject": "Môn 2", "grade4": 2.8, "grade10": 7.0},
-      {"subject": "Môn 3", "grade4": 4.0, "grade10": 9.5},
-      {"subject": "Môn 4", "grade4": 3.2, "grade10": 8.0},
-      {"subject": "Môn 5", "grade4": 3.8, "grade10": 9.0}
-    ]
-  }
-  
+  "student_id": "B21DCVT412",
+  "name": "Nguyễn Tiến Thiệu",
+  "birthdate": "2003-08-04",
+  "course_year": "D21",
+  "hometown": "Hà Nội",
+  "address": "Đường Làng Ải",
+  "grades": [
+    {"subject": "Môn 1", "grade4": 3.5, "grade10": 8.5},
+    {"subject": "Môn 2", "grade4": 2.8, "grade10": 7.0},
+    {"subject": "Môn 3", "grade4": 4.0, "grade10": 9.5},
+    {"subject": "Môn 4", "grade4": 3.2, "grade10": 8.0},
+    {"subject": "Môn 5", "grade4": 3.8, "grade10": 9.0}
+  ]
+}

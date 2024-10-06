@@ -217,6 +217,83 @@ td {
     margin: 20px 0;
 }
 
+/* Nút Sửa thông tin */
+.edit-btn {
+    margin-top: 10px;
+}
+
+.edit-btn .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007acc;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn .button:hover {
+    background-color: #005f99;
+}
+
+.edit-student-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.edit-student-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-grid div {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-grid label {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-grid input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+.submit-btn {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.submit-btn button {
+    padding: 10px 20px;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn button:hover {
+    background-color: #005f99;
+}
+
+
 .footer {
     position: absolute;
     bottom: 0;
