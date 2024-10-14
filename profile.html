@@ -46,57 +46,77 @@
         <p>Copyright @ 2024 Nguyễn Tiến Thiệu</p>
     </footer>
     <script>
-        // Hàm tải file JSON và hiển thị dữ liệu
-fetch('data/grades.json')  // Đường dẫn đến file JSON
-    .then(response => response.json())
-    .then(data => {
-        // Cập nhật thông tin sinh viên
-        const studentDetails = document.getElementById('student-details');
-        studentDetails.innerHTML = `
-            <li><strong>Mã sinh viên:</strong> ${data.student_id}</li>
-            <li><strong>Họ và tên:</strong> ${data.name}</li>
-            <li><strong>Ngày sinh:</strong> ${data.birthdate}</li>
-            <li><strong>Khóa học:</strong> ${data.course_year}</li>
-            <li><strong>Thành phố:</strong> ${data.hometown}</li>
-            <li><strong>Địa chỉ:</strong> ${data.address}</li>
-        `;
-
-        // Chuẩn bị dữ liệu cho biểu đồ
-        const labels = data.grades.map(grade => grade.subject); // Lấy tên môn học
-        const gradeData = data.grades.map(grade => grade.grade4); // Lấy điểm thang 4
-
-        // Cấu hình và tạo biểu đồ
-        const chartData = {
-            labels: labels,
-            datasets: [{
-                label: 'Điểm thang 4',
-                data: gradeData,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        };
-
-        const config = {
-            type: 'bar',
-            data: chartData,
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 4 // Giới hạn thang điểm 4.0
-                    }
+ // Hàm này nên được gọi khi trang thông tin sinh viên được tải
+window.onload = async () => {
+    const studentId = sessionStorage.getItem('student_id'); // Lấy student_id từ sessionStorage
+    
+    if (studentId) {
+        try {
+            const response = await fetch(`data/grades.json${studentId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}` // Nếu sử dụng JWT
                 }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Cập nhật thông tin sinh viên
+                const studentDetails = document.getElementById('student-details');
+                studentDetails.innerHTML = `
+                    <li><strong>Mã sinh viên:</strong> ${data.student_id}</li>
+                    <li><strong>Họ và tên:</strong> ${data.name}</li>
+                    <li><strong>Ngày sinh:</strong> ${data.birthdate}</li>
+                    <li><strong>Khóa học:</strong> ${data.course_year}</li>
+                    <li><strong>Thành phố:</strong> ${data.hometown}</li>
+                    <li><strong>Địa chỉ:</strong> ${data.address}</li>
+                `;
+                
+                // Cập nhật biểu đồ điểm
+                const labels = data.grades.map(grade => grade.subject);
+                const gradeData = data.grades.map(grade => grade.grade4);
+                
+                const chartData = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Điểm thang 4',
+                        data: gradeData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                };
+                
+                const config = {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 4 // Giới hạn thang điểm 4.0
+                            }
+                        }
+                    }
+                };
+                
+                const gradeChart = new Chart(
+                    document.getElementById('gradeChart'),
+                    config
+                );
+            } else {
+                alert('Không thể tải thông tin sinh viên: ' + data.message);
             }
-        };
-
-        // Tạo biểu đồ
-        const gradeChart = new Chart(
-            document.getElementById('gradeChart'),
-            config
-        );
-    })
-    .catch(error => console.error('Error loading JSON data:', error));
+        } catch (error) {
+            console.error('Lỗi khi tải thông tin sinh viên:', error);
+            alert('Có lỗi xảy ra khi tải thông tin.');
+        }
+    } else {
+        alert('Bạn cần đăng nhập để xem thông tin.');
+        window.location.href = 'index.html'; // Điều hướng về trang đăng nhập
+    }
+};
 
     </script>
 </body>

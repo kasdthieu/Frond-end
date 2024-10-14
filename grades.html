@@ -51,40 +51,50 @@
         <p>Copyright @ 2024 Nguyễn Tiến Thiệu</p>
     </footer>
     <script>
-        // Hàm tải file JSON và cập nhật bảng
-        function loadGrades(semester) {
-            fetch('data/diem.json') // Đường dẫn tới file JSON
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('gradeTableBody');
-                    tableBody.innerHTML = ''; // Xóa nội dung cũ
-
-                    // Lấy danh sách môn học theo kỳ học đã chọn
-                    const grades = data[`semester_${semester}`];
-                    grades.forEach(grade => {
-                        // Thêm hàng mới vào bảng
-                        const row = `<tr>
-                            <td>${grade.code}</td>
-                            <td>${grade.name}</td>
-                            <td>${grade.grade4}</td>
-                            <td>${grade.grade10}</td>
-                        </tr>`;
-                        tableBody.innerHTML += row;
+        // Tải bảng điểm dựa trên `student_id`
+        async function loadStudentGrades() {
+            const studentId = sessionStorage.getItem('student_id');
+            
+            if (studentId) {
+                try {
+                    const response = await fetch(`https://your-backend-url/api/grades?student_id=${studentId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        }
                     });
-                })
-                .catch(error => console.error('Error loading JSON:', error));
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const tableBody = document.getElementById('gradeTableBody');
+                        tableBody.innerHTML = ''; // Xóa nội dung cũ
+    
+                        data.grades.forEach(grade => {
+                            const row = `<tr>
+                                <td>${grade.code}</td>
+                                <td>${grade.name}</td>
+                                <td>${grade.grade4}</td>
+                                <td>${grade.grade10}</td>
+                            </tr>`;
+                            tableBody.innerHTML += row;
+                        });
+                    } else {
+                        alert('Không thể tải bảng điểm: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi tải bảng điểm:', error);
+                    alert('Có lỗi xảy ra khi tải bảng điểm.');
+                }
+            } else {
+                alert('Bạn cần đăng nhập để xem bảng điểm.');
+                window.location.href = 'index.html'; // Điều hướng về trang đăng nhập
+            }
         }
-
-        // Khi người dùng chọn kỳ học
-        document.getElementById('semester').addEventListener('change', function() {
-            const selectedSemester = this.value;
-            loadGrades(selectedSemester);
-        });
-
-        // Tải dữ liệu kỳ 1 khi trang được load
-        window.onload = function() {
-            loadGrades(1);
-        };
+    
+        // Gọi hàm khi trang "Xem điểm" được tải
+        window.onload = loadStudentGrades;
     </script>
+    
 </body>
 </html>

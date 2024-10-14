@@ -1,0 +1,20 @@
+[
+    {
+        "code": "BAS1153",
+        "name": "Lịch sử Đảng cộng sản Việt Nam",
+        "group": "Nhóm 1",
+        "credits": 3,
+        "classroom": "202-A2",
+        "day": "Thứ 2",
+        "time": "7-9h"
+    },
+    {
+        "code": "CSE101",
+        "name": "Lập trình C",
+        "group": "Nhóm 2",
+        "credits": 4,
+        "classroom": "301-A1",
+        "day": "Thứ 4",
+        "time": "9-11h"
+    }
+]

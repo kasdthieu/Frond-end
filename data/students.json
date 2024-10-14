@@ -1,0 +1,44 @@
+{
+    "students": [
+        {
+            "student_id": "D22VT01",
+            "name": "Nguyễn Văn An",
+            "birthdate": "2003-01-01",
+            "course_year": "D22",
+            "hometown": "Hà Nội",
+            "address": "Đường Láng"
+        },
+        {
+            "student_id": "D22VT02",
+            "name": "Nguyễn Vân Anh",
+            "birthdate": "2003-02-15",
+            "course_year": "D22",
+            "hometown": "Bắc Ninh",
+            "address": "Ao Sen"
+        },
+        {
+            "student_id": "D22VT03",
+            "name": "Trần Văn Bình",
+            "birthdate": "2003-02-14",
+            "course_year": "D22",
+            "hometown": "Hà Nam",
+            "address": "Vạn Phúc"
+        },
+        {
+            "student_id": "D22VT04",
+            "name": "Vũ Thị Hải Yến",
+            "birthdate": "2003-09-19",
+            "course_year": "D22",
+            "hometown": "Ninh Bình",
+            "address": "Yên Xá"
+        },
+        {
+            "student_id": "D22VT05",
+            "name": "Đỗ Mạnh Tùng",
+            "birthdate": "2003-04-14",
+            "course_year": "D22",
+            "hometown": "Thái Bình",
+            "address": "Mậu Lương"
+        }
+    ]
+}

@@ -6,6 +6,7 @@
     <title>Đăng ký môn học</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="asset/css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Thêm thư viện jQuery -->
 </head>
 <body>
     <!-- Thanh điều hướng -->
@@ -15,7 +16,7 @@
             <li><a href="profile.html">Thông tin sinh viên</a></li>
             <li><a href="grades.html">Xem điểm</a></li>
             <li><a href="register.html" class="active">Đăng ký môn học</a></li>
-            <li><a href="schedule.html" >Lên lịch học</a></li>
+            <li><a href="schedule.html">Lên lịch học</a></li>
             <li><a href="schedule-view.html">Xem lịch học</a></li>
             <li><a href="index.html" class="logout">Đăng xuất</a></li>
         </ul>
@@ -25,27 +26,22 @@
     <div class="container">
         <div class="course-registration">
             <h2>Đăng ký môn học</h2>
-            <form action="#" method="post">
-                <table class="course-table">
+            <form id="registrationForm">
+                <table class="course-table" id="courseTable">
                     <thead>
                         <tr>
-                            <th>Chọn</th>
                             <th>Mã môn học</th>
                             <th>Tên môn học</th>
+                            <th>Nhóm môn học</th>
+                            <th>Số tín chỉ</th>
+                            <th>Phòng học</th>
+                            <th>Ngày học</th>
+                            <th>Thời gian</th>
+                            <th>Chọn</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="checkbox" name="course" value="CSE101"></td>
-                            <td>CSE101</td>
-                            <td>Lập trình C</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="course" value="MTH202"></td>
-                            <td>MTH202</td>
-                            <td>Toán cao cấp</td>
-                        </tr>
-                        <!-- Thêm nhiều môn học hơn nếu cần -->
+                        <!-- Dữ liệu sẽ được thêm vào đây -->
                     </tbody>
                 </table>
                 <div class="submit-btn">
@@ -57,5 +53,72 @@
     <footer class="footer">
         <p>Copyright @ 2024 Nguyễn Tiến Thiệu</p>
     </footer>
+    
+    <script>
+        $(document).ready(function() {
+    // Lấy `student_id` từ sessionStorage
+    const studentId = sessionStorage.getItem('student_id');
+    
+    // Kiểm tra nếu `student_id` không tồn tại
+    if (!studentId) {
+        alert('Bạn cần đăng nhập để xem thông tin.');
+        window.location.href = 'index.html'; // Điều hướng đến trang đăng nhập nếu chưa đăng nhập
+        return;
+    }
+
+    // Tải danh sách môn học từ backend dựa trên `student_id`
+    $.getJSON(`path/to/your/backend/api/courses?student_id=${studentId}`, function(data) {
+        const tableBody = $('#courseTable tbody');
+        tableBody.empty(); // Xóa các hàng cũ (nếu có)
+        
+        // Tạo hàng mới cho từng môn học
+        data.forEach(course => {
+            const row = `
+                <tr>
+                    <td>${course.code}</td>
+                    <td>${course.name}</td>
+                    <td>${course.group}</td>
+                    <td>${course.credits}</td>
+                    <td>${course.classroom}</td>
+                    <td>${course.day}</td>
+                    <td>${course.time}</td>
+                    <td><input type="checkbox" name="course" value="${course.code}"></td>
+                </tr>
+            `;
+            tableBody.append(row);
+        });
+    }).fail(function() {
+        alert('Không thể tải danh sách môn học.');
+    });
+
+    // Xử lý sự kiện gửi form đăng ký
+    $('#registrationForm').on('submit', function(event) {
+        event.preventDefault();
+        
+        // Lấy danh sách mã môn học đã chọn
+        const selectedCourses = $('input[name="course"]:checked').map(function() {
+            return this.value;
+        }).get();
+        
+        // Gửi yêu cầu đăng ký môn học đến backend
+        $.ajax({
+            url: 'path/to/your/backend/api/register', // Thay thế bằng đường dẫn API chính xác
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                studentId: studentId, // Bao gồm `student_id`
+                selectedCourses: selectedCourses
+            }),
+            success: function(response) {
+                alert('Đăng ký thành công!');
+            },
+            error: function(error) {
+                alert('Có lỗi xảy ra, vui lòng thử lại.');
+            }
+        });
+    });
+});
+
+    </script>
 </body>
 </html>

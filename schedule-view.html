@@ -48,8 +48,16 @@
     </footer>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Lấy dữ liệu từ file JSON
-            fetch('data/schedule.json')
+            const studentId = sessionStorage.getItem('student_id');
+            
+            if (!studentId) {
+                alert('Bạn cần đăng nhập để xem thời khóa biểu.');
+                window.location.href = 'index.html'; // Chuyển hướng nếu chưa có `student_id`
+                return;
+            }
+    
+            // Giả sử URL endpoint để lấy dữ liệu thời khóa biểu theo `student_id`
+            fetch(`data/schedule_${studentId}.json`)
                 .then(response => response.json())
                 .then(data => {
                     const scheduleTableBody = document.getElementById('scheduleTableBody');
@@ -61,13 +69,13 @@
                         "13:00 - 14:00",
                         "14:00 - 15:00"
                     ];
-
+    
                     timeSlots.forEach(timeSlot => {
                         const row = document.createElement('tr');
                         const timeSlotCell = document.createElement('td');
                         timeSlotCell.textContent = timeSlot;
                         row.appendChild(timeSlotCell);
-
+    
                         // Duyệt qua các ngày trong tuần
                         ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach(day => {
                             const cell = document.createElement('td');
@@ -79,12 +87,13 @@
                             }
                             row.appendChild(cell);
                         });
-
+    
                         scheduleTableBody.appendChild(row);
                     });
                 })
                 .catch(error => console.error('Error loading schedule data:', error));
         });
     </script>
+    
 </body>
 </html>

@@ -127,54 +127,66 @@
     </footer>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Lấy dữ liệu từ file JSON
-            fetch('data/courses.json')
-                .then(response => response.json())
-                .then(data => {
-                    // Populate course dropdown
-                    const courseSelect = document.getElementById('course');
-                    data.courses.forEach(course => {
-                        const option = document.createElement('option');
-                        option.value = course.id;
-                        option.textContent = course.name;
-                        courseSelect.appendChild(option);
-                    });
-
-                    // Khi chọn môn học, cập nhật danh sách lớp học phần
-                    courseSelect.addEventListener('change', function() {
-                        const selectedCourse = data.courses.find(course => course.id === this.value);
-                        const classSectionSelect = document.getElementById('classSection');
-                        classSectionSelect.innerHTML = '<option value="">-- Chọn lớp học phần --</option>';
-
-                        if (selectedCourse) {
-                            selectedCourse.sections.forEach(section => {
-                                const option = document.createElement('option');
-                                option.value = section;
-                                option.textContent = section;
-                                classSectionSelect.appendChild(option);
-                            });
-                        }
-                    });
-
-                    // Populate room dropdown
-                    const roomSelect = document.getElementById('room');
-                    data.rooms.forEach(room => {
-                        const option = document.createElement('option');
-                        option.value = room;
-                        option.textContent = room;
-                        roomSelect.appendChild(option);
-                    });
-
-                    // Populate time slot dropdown
-                    const timeSlotSelect = document.getElementById('timeSlot');
-                    data.timeSlots.forEach(slot => {
-                        const option = document.createElement('option');
-                        option.value = slot;
-                        option.textContent = slot;
-                        timeSlotSelect.appendChild(option);
-                    });
-                });
-
+            // Lấy student_id từ sessionStorage
+            const studentId = sessionStorage.getItem('student_id');
+            
+            // Kiểm tra xem student_id có tồn tại không
+            if (studentId) {
+                // Gửi yêu cầu đến backend để lấy dữ liệu
+                fetch(`your_backend_endpoint?student_id=${studentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Dữ liệu của bạn sẽ được xử lý ở đây
+                        // Giả sử bạn nhận được dữ liệu về các môn học, lớp học phần, phòng học và khung giờ
+    
+                        // Populate course dropdown
+                        const courseSelect = document.getElementById('course');
+                        data.courses.forEach(course => {
+                            const option = document.createElement('option');
+                            option.value = course.id;
+                            option.textContent = course.name;
+                            courseSelect.appendChild(option);
+                        });
+    
+                        // Khi chọn môn học, cập nhật danh sách lớp học phần
+                        courseSelect.addEventListener('change', function() {
+                            const selectedCourse = data.courses.find(course => course.id === this.value);
+                            const classSectionSelect = document.getElementById('classSection');
+                            classSectionSelect.innerHTML = '<option value="">-- Chọn lớp học phần --</option>';
+    
+                            if (selectedCourse) {
+                                selectedCourse.sections.forEach(section => {
+                                    const option = document.createElement('option');
+                                    option.value = section;
+                                    option.textContent = section;
+                                    classSectionSelect.appendChild(option);
+                                });
+                            }
+                        });
+    
+                        // Populate room dropdown
+                        const roomSelect = document.getElementById('room');
+                        data.rooms.forEach(room => {
+                            const option = document.createElement('option');
+                            option.value = room;
+                            option.textContent = room;
+                            roomSelect.appendChild(option);
+                        });
+    
+                        // Populate time slot dropdown
+                        const timeSlotSelect = document.getElementById('timeSlot');
+                        data.timeSlots.forEach(slot => {
+                            const option = document.createElement('option');
+                            option.value = slot;
+                            option.textContent = slot;
+                            timeSlotSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            } else {
+                console.error('Student ID not found in sessionStorage');
+            }
+    
             // Xử lý khi gửi form
             document.getElementById('scheduleForm').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -182,10 +194,11 @@
                 const selectedSection = document.getElementById('classSection').value;
                 const selectedRoom = document.getElementById('room').value;
                 const selectedTimeSlot = document.getElementById('timeSlot').value;
-
+    
                 if (selectedCourse && selectedSection && selectedRoom && selectedTimeSlot) {
                     // Giả lập lưu dữ liệu vào CSDL (sử dụng fetch để gửi đến backend nếu có)
                     console.log('Lưu lịch học: ', {
+                        studentId: studentId, // Thêm studentId vào đây
                         course: selectedCourse,
                         section: selectedSection,
                         room: selectedRoom,
@@ -197,5 +210,6 @@
             });
         });
     </script>
+    
 </body>
 </html>
