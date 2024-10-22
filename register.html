@@ -67,7 +67,7 @@
             }
 
             // Tải danh sách môn học từ backend
-            $.getJSON(`path/to/your/backend/api/courses?student_id=${studentId}`, function(data) {
+            $.getJSON(`http://localhost:3000/courses`, function(data) {
                 const tableBody = $('#courseTable tbody');
                 tableBody.empty();
                 
