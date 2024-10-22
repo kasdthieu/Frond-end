@@ -15,7 +15,7 @@
             <li><a href="profile.html">Thông tin sinh viên</a></li>
             <li><a href="grades.html" class="active">Xem điểm</a></li>
             <li><a href="register.html">Đăng ký môn học</a></li>
-            <li><a href="schedule.html" >Lên lịch học</a></li>
+            <li><a href="schedule.html">Lên lịch học</a></li>
             <li><a href="schedule-view.html">Xem lịch học</a></li>
             <li><a href="index.html" class="logout">Đăng xuất</a></li>
         </ul>
@@ -24,21 +24,20 @@
     <!-- Nội dung trang xem điểm -->
     <div class="container">
         <div class="grade-view">
-            <h2>Bảng điểm</h2>
-            <div class="semester-select">
-                <label for="semester">Chọn kỳ học:</label>
-                <select id="semester">
-                    <option value="1">Kỳ 1</option>
-                    <option value="2">Kỳ 2</option>
-                </select>
-            </div>
+            <h2>Bảng điểm theo trọng số</h2>
             <table class="grade-table">
                 <thead>
                     <tr>
-                        <th>Mã môn học</th>
-                        <th>Tên môn học</th>
-                        <th>Điểm thang 4</th>
-                        <th>Điểm thang 10</th>
+                        <th>Mã lớp học</th>
+                        <th>Điểm 1</th>
+                        <th>Trọng số 1</th>
+                        <th>Điểm 2</th>
+                        <th>Trọng số 2</th>
+                        <th>Điểm 3</th>
+                        <th>Trọng số 3</th>
+                        <th>Điểm CK</th>
+                        <th>Trọng số CK</th>
+                        <th>Điểm TK</th>
                     </tr>
                 </thead>
                 <tbody id="gradeTableBody">
@@ -47,9 +46,11 @@
             </table>
         </div>
     </div>
+
     <footer class="footer">
         <p>Copyright @ 2024 Nguyễn Tiến Thiệu</p>
     </footer>
+
     <script>
         // Tải bảng điểm dựa trên `student_id`
         async function loadStudentGrades() {
@@ -57,31 +58,33 @@
             
             if (studentId) {
                 try {
-                    const response = await fetch(`https://your-backend-url/api/grades?student_id=${studentId}`, {
+                    const response = await fetch(`http://localhost:3000/grades/${studentId}`, {
                         method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                             'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                         }
                     });
                     
                     const data = await response.json();
                     
-                    if (data.success) {
-                        const tableBody = document.getElementById('gradeTableBody');
-                        tableBody.innerHTML = ''; // Xóa nội dung cũ
-    
-                        data.grades.forEach(grade => {
-                            const row = `<tr>
-                                <td>${grade.code}</td>
-                                <td>${grade.name}</td>
-                                <td>${grade.grade4}</td>
-                                <td>${grade.grade10}</td>
-                            </tr>`;
-                            tableBody.innerHTML += row;
-                        });
-                    } else {
-                        alert('Không thể tải bảng điểm: ' + data.message);
-                    }
+                    const tableBody = document.getElementById('gradeTableBody');
+                    tableBody.innerHTML = ''; // Xóa nội dung cũ
+
+                    data.forEach(grade => {
+                        const row = `<tr>
+                            <td>${grade.class_id}</td>
+                            <td>${grade.grade1}</td>
+                            <td>${grade.grade1_weight}</td>
+                            <td>${grade.grade2}</td>
+                            <td>${grade.grade2_weight}</td>
+                            <td>${grade.grade3}</td>
+                            <td>${grade.grade3_weight}</td>
+                            <td>${grade.final_exam}</td>
+                            <td>${grade.final_exam_weight}</td>
+                            <td>${grade.final_grade}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
                 } catch (error) {
                     console.error('Lỗi khi tải bảng điểm:', error);
                     alert('Có lỗi xảy ra khi tải bảng điểm.');
