@@ -40,59 +40,78 @@
                 <tbody id="scheduleTableBody">
                     <!-- Dữ liệu sẽ được thêm vào đây thông qua JavaScript -->
                 </tbody>
-            </table>
+            </table>            
         </div>
     </div>
     <footer class="footer">
         <p>Copyright @ 2024 Nguyễn Tiến Thiệu</p>
     </footer>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const studentId = sessionStorage.getItem('student_id');
-            
-            if (!studentId) {
-                alert('Bạn cần đăng nhập để xem thời khóa biểu.');
-                window.location.href = 'index.html'; // Chuyển hướng nếu chưa có `student_id`
-                return;
-            }
+ window.onload = async () => {
+    const studentId = sessionStorage.getItem('student_id');
     
-            // Giả sử URL endpoint để lấy dữ liệu thời khóa biểu theo `student_id`
-            fetch(`data/schedule_${studentId}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const scheduleTableBody = document.getElementById('scheduleTableBody');
-                    const timeSlots = [
-                        "08:00 - 09:00",
-                        "09:00 - 10:00",
-                        "10:00 - 11:00",
-                        "11:00 - 12:00",
-                        "13:00 - 14:00",
-                        "14:00 - 15:00"
-                    ];
-    
-                    timeSlots.forEach(timeSlot => {
-                        const row = document.createElement('tr');
-                        const timeSlotCell = document.createElement('td');
-                        timeSlotCell.textContent = timeSlot;
-                        row.appendChild(timeSlotCell);
-    
-                        // Duyệt qua các ngày trong tuần
-                        ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach(day => {
-                            const cell = document.createElement('td');
-                            const classInfo = data.schedule[day].find(cls => cls.time === timeSlot);
-                            // Nếu không có lớp, để ô trống
-                            cell.textContent = classInfo ? classInfo.subject : '';
-                            if (!classInfo) {
-                                cell.classList.add('no-class'); // Nếu không có lớp, áp dụng kiểu dáng
-                            }
-                            row.appendChild(cell);
-                        });
-    
-                        scheduleTableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error loading schedule data:', error));
+    if (!studentId) {
+        alert('Bạn cần đăng nhập để xem thông tin.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    try {
+        const apiUrl = `http://localhost:3000/shedule`;
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!Array.isArray(data) || data.length === 0) {
+            console.warn('No schedule data available.');
+            return;
+        }
+
+        const scheduleTableBody = document.getElementById('scheduleTableBody');
+        scheduleTableBody.innerHTML = ''; // Xóa dữ liệu cũ trong bảng nếu có
+
+        const timeSlots = ["7-9h", "9-11h", "13h-15h", "15h-17h", "17h-19h"];
+        const daysOfWeek = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+
+        // Tạo các hàng cho khung giờ cố định
+        timeSlots.forEach(timeSlot => {
+            const row = document.createElement('tr');
+            const timeSlotCell = document.createElement('td');
+            timeSlotCell.textContent = timeSlot;
+            row.appendChild(timeSlotCell);
+
+            // Duyệt qua từng ngày trong tuần và điền dữ liệu
+            daysOfWeek.forEach(day => {
+                const cell = document.createElement('td');
+                const classInfo = data.find(cls => cls.day === day && cls.time === timeSlot);
+
+                if (classInfo) {
+                    cell.innerHTML = `
+                        <strong>${classInfo.name}</strong><br>
+                        Mã: ${classInfo.code}<br>
+                        Nhóm: ${classInfo.group}<br>
+                        Phòng: ${classInfo.classroom}
+                    `;
+                } else {
+                    cell.textContent = '-';
+                    cell.classList.add('no-class');
+                }
+
+                row.appendChild(cell);
+            });
+
+            scheduleTableBody.appendChild(row);
         });
+    } catch (error) {
+        console.error('Error loading schedule data:', error);
+    }
+};
+
     </script>
     
 </body>

@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, content-scale=1.0">
     <title>Đăng ký môn học</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="asset/css/styles.css">
@@ -56,77 +56,82 @@
     </footer>
     
     <script>
-        $(document).ready(function() {
-            // Lấy `student_id` từ sessionStorage
-            const studentId = sessionStorage.getItem('student_id');
-            
-            if (!studentId) {
-                alert('Bạn cần đăng nhập để xem thông tin.');
-                window.location.href = 'index.html';
-                return;
-            }
+            window.onload = async () => {
+                const studentId = sessionStorage.getItem('student_id');
+                
+                if (!studentId) {
+                    alert('Bạn cần đăng nhập để xem thông tin.');
+                    window.location.href = 'index.html';
+                    return;
+                }
 
-            // Tải danh sách môn học từ backend
-            $.getJSON(`http://localhost:3000/courses`, function(data) {
-                const tableBody = $('#courseTable tbody');
-                tableBody.empty();
-                
-                // Tạo hàng mới cho từng môn học
-                data.forEach(course => {
-                    const isFull = course.slot === 0;
-                    const row = `
-                        <tr>
-                            <td>${course.code}</td>
-                            <td>${course.name}</td>
-                            <td>${course.group}</td>
-                            <td>${course.credits}</td>
-                            <td>${course.classroom}</td>
-                            <td>${course.day}</td>
-                            <td>${course.time}</td>
-                            <td>${course.slot}</td>
-                            <td>
-                                <input type="checkbox" name="course" value="${course.code}" ${isFull ? 'disabled' : ''} 
-                                       ${isFull ? 'class="full-slot"' : ''} title="${isFull ? 'Lớp đã hết số lượng' : ''}">
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.append(row);
-                });
-                
-                // Thêm thông báo khi nhấp vào checkbox không thể chọn
-                $('#courseTable').on('click', '.full-slot', function(event) {
-                    event.preventDefault();
-                    alert('Lớp đã hết số lượng!');
-                });
-            }).fail(function() {
-                alert('Không thể tải danh sách môn học.');
-            });
+                try {
+                    const response = await fetch('http://localhost:3000/courses');
+                    const data = await response.json();
+                    
+                    const tableBody = $('#courseTable tbody');
+                    tableBody.empty();
 
-            // Xử lý sự kiện gửi form đăng ký
-            $('#registrationForm').on('submit', function(event) {
-                event.preventDefault();
-                
-                const selectedCourses = $('input[name="course"]:checked').map(function() {
-                    return this.value;
-                }).get();
-                
-                $.ajax({
-                    url: 'path/to/your/backend/api/register',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        studentId: studentId,
-                        selectedCourses: selectedCourses
-                    }),
-                    success: function(response) {
-                        alert('Đăng ký thành công!');
-                    },
-                    error: function(error) {
-                        alert('Có lỗi xảy ra, vui lòng thử lại.');
-                    }
-                });
-            });
-        });
+                    data.forEach(course => {
+                        const isFull = course.slot === 0;
+                        const row = `
+                            <tr>
+                                <td>${course.code}</td>
+                                <td>${course.name}</td>
+                                <td>${course.group}</td>
+                                <td>${course.credits}</td>
+                                <td>${course.classroom}</td>
+                                <td>${course.day}</td>
+                                <td>${course.time}</td>
+                                <td>${course.slot}</td>
+                                <td>
+                                    <input type="checkbox" name="course" value="${course.code}" data-class-id="${course.id}" ${isFull ? 'disabled' : ''} 
+                                        ${isFull ? 'class="full-slot"' : ''} title="${isFull ? 'Lớp đã hết số lượng' : ''}">
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.append(row);
+                    });
+                    
+                    $('#courseTable').on('click', '.full-slot', function(event) {
+                        event.preventDefault();
+                        alert('Lớp đã hết số lượng!');
+                    });
+
+                    $('#registrationForm').on('submit', async function(event) {
+                        event.preventDefault();
+
+                        const selectedCourses = $('input[name="course"]:checked').map(function() {
+                            const courseRow = $(this).closest('tr');
+                            return {
+                                code: courseRow.find('td').eq(0).text(),
+                                name: courseRow.find('td').eq(1).text(),
+                                group: courseRow.find('td').eq(2).text(),
+                                credits: parseInt(courseRow.find('td').eq(3).text()),
+                                classroom: courseRow.find('td').eq(4).text(),
+                                day: courseRow.find('td').eq(5).text(),
+                                time: courseRow.find('td').eq(6).text(),
+                                class_id: $(this).data('class-id')
+                            };
+                        }).get();
+
+                        try {
+                            const response = await $.ajax({
+                                url: 'http://localhost:3000/shedule',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ selectedCourses })
+                            });
+                            alert('Đăng ký thành công!');
+                        } catch (error) {
+                            alert('Có lỗi xảy ra, vui lòng thử lại.');
+                        }
+                    });
+                } catch (error) {
+                    alert('Không thể tải danh sách môn học.');
+                }
+            };
+
     </script>
 </body>
 </html>
